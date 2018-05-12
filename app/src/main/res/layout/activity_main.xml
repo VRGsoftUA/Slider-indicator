@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bgColor"
+    tools:context="net.vrgsoft.slider.MainActivity">
+
+    <net.vrgsoft.library.Slider
+        app:pointsCount="8"
+        app:animationDuration="1000"
+        app:pointPulseColor="#66ff4444"
+        app:pointOuterColor="@android:color/holo_purple"
+        android:orientation="horizontal"
+        android:layout_width="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_height="wrap_content"/>
+
+</android.support.constraint.ConstraintLayout>
