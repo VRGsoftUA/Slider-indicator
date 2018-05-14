@@ -8,14 +8,71 @@
     tools:context="net.vrgsoft.slider.MainActivity">
 
     <net.vrgsoft.library.Slider
-        app:pointsCount="8"
-        app:animationDuration="1000"
-        app:pointPulseColor="#66ff4444"
-        app:pointOuterColor="@android:color/holo_purple"
-        android:orientation="horizontal"
+        android:id="@+id/slider"
         android:layout_width="0dp"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:animationDuration="1000"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_height="wrap_content"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:onPointClick="onPointClick"
+        app:pointInnerColor="@color/colorAccent"
+        app:pointOuterColor="@android:color/holo_purple"
+        app:pointPulseColor="#66ff4444"
+        app:lineInnerColor="@color/colorPrimaryDark"
+        app:lineStrokeWidth="2dp"
+        app:lineOuterColor="@color/colorAccent"
+        app:pointsCount="8" />
 
+    <net.vrgsoft.library.Slider
+        android:id="@+id/slider1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:animationDuration="1000"
+        app:layout_constraintTop_toBottomOf="@id/slider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:pointInnerColor="@android:color/holo_green_dark"
+        app:pointOuterColor="@android:color/holo_orange_dark"
+        app:pointPulseColor="@android:color/white"
+        app:lineInnerColor="@android:color/holo_red_dark"
+        app:lineStrokeWidth="10dp"
+        app:lineOuterColor="@color/defaultInnerLineColor"
+        app:pointsCount="6" />
+
+    <net.vrgsoft.library.Slider
+        android:id="@+id/slider2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:animationDuration="1000"
+        app:layout_constraintTop_toBottomOf="@id/slider1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:pointInnerColor="@android:color/holo_blue_light"
+        app:pointOuterColor="@android:color/holo_purple"
+        app:pointPulseColor="@android:color/holo_blue_light"
+        app:lineInnerColor="@color/colorPrimaryDark"
+        app:lineStrokeWidth="15dp"
+        app:lineOuterColor="@color/bgColor"
+        app:pointsCount="5" />
+
+    <net.vrgsoft.library.Slider
+        android:id="@+id/slider3"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:animationDuration="1000"
+        app:layout_constraintTop_toBottomOf="@id/slider2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:pointInnerColor="@android:color/holo_green_dark"
+        app:pointOuterColor="@android:color/holo_purple"
+        app:pointPulseColor="#66ff4444"
+        app:lineInnerColor="@color/colorAccent"
+        app:lineStrokeWidth="20dp"
+        app:lineOuterColor="@color/colorAccent"
+        app:pointsCount="3" />
 </android.support.constraint.ConstraintLayout>

@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.support.annotation.ColorInt;
+import android.support.annotation.IntRange;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
@@ -19,6 +21,7 @@ class SliderBgLine extends View {
     private Paint paint;
     private int outerLineColor;
     private int innerLineColor;
+    private long duration;
     private float directionLineWidth;
     private float innerLineWidth;
     private float outerLineWidth;
@@ -27,7 +30,6 @@ class SliderBgLine extends View {
     private float currentPosition;
     private ValueAnimator animator;
     private int mOrientation;
-    private long duration;
 
     public SliderBgLine(Context context) {
         this(context, null);
@@ -140,5 +142,35 @@ class SliderBgLine extends View {
         animator.setInterpolator(new LinearInterpolator());
         animator.setDuration(duration);
         animator.start();
+    }
+
+    /**
+     * @param outerLineColor color to be set
+     */
+    public void setOuterLineColor(@ColorInt int outerLineColor) {
+        this.outerLineColor = outerLineColor;
+        invalidate();
+    }
+
+    /**
+     * @param innerLineColor color to be set
+     */
+    public void setInnerLineColor(@ColorInt int innerLineColor) {
+        this.innerLineColor = innerLineColor;
+        invalidate();
+    }
+
+    /**
+     * @param duration duration to be set
+     */
+    public void setDuration(long duration) {
+        this.duration = duration;
+    }
+
+    /**
+     * @param orientation orientation to be set
+     */
+    public void setOrientation(@IntRange(from = LinearLayout.HORIZONTAL, to = LinearLayout.VERTICAL) int orientation) {
+        mOrientation = orientation;
     }
 }

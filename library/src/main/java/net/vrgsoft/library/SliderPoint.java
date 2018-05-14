@@ -227,4 +227,23 @@ class SliderPoint extends View {
         currentInnerRadius = endInnerRadius;
         invalidate();
     }
+
+    public void setDuration(long duration) {
+        this.duration = duration;
+    }
+
+    public void setPulseColor(int pulseColor) {
+        this.pulseColor = pulseColor;
+        invalidate();
+    }
+
+    public void setOuterColor(int outerColor) {
+        this.outerColor = outerColor;
+        invalidate();
+    }
+
+    public void setInnerColor(int innerColor) {
+        this.innerColor = innerColor;
+        invalidate();
+    }
 }

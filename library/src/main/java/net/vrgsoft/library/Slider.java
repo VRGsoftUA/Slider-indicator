@@ -4,6 +4,10 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.res.TypedArray;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.support.annotation.ColorInt;
+import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -95,10 +99,55 @@ public class Slider extends ConstraintLayout {
         }
     }
 
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+    }
+
     private void initBgLine(Context context, AttributeSet attrs) {
         mBgLine = new SliderBgLine(context, attrs);
         mBgLine.setPointsCount(mPointsCount);
         mBgLine.setId(START_INDEX - 1);
+        initLineLayoutParams();
+        addView(mBgLine);
+    }
+
+    private void initPointsLayoutParams() {
+        float bias = 1.0f / (mPointsCount - 1);
+        float currentBias = 0;
+
+        if (mOrientation == HORIZONTAL) {
+            for (int i = START_INDEX; i < START_INDEX + mPointsCount; ++i) {
+                SliderPoint point = mPoints.get(i);
+
+                ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(mPointSize, mPointSize);
+                params.topToTop = PARENT_ID;
+                params.bottomToBottom = PARENT_ID;
+                params.startToStart = PARENT_ID;
+                params.endToEnd = PARENT_ID;
+                params.horizontalBias = currentBias;
+
+                point.setLayoutParams(params);
+                currentBias += bias;
+            }
+        } else {
+            for (int i = START_INDEX; i < START_INDEX + mPointsCount; ++i) {
+                SliderPoint point = mPoints.get(i);
+
+                ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(mPointSize, mPointSize);
+                params.startToStart = PARENT_ID;
+                params.endToEnd = PARENT_ID;
+                params.startToStart = PARENT_ID;
+                params.endToEnd = PARENT_ID;
+                params.verticalBias = currentBias;
+
+                point.setLayoutParams(params);
+                currentBias += bias;
+            }
+        }
+    }
+
+    private void initLineLayoutParams() {
         ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, mLineStrokeWidth);
         params.topToTop = PARENT_ID;
         params.bottomToBottom = PARENT_ID;
@@ -116,7 +165,6 @@ public class Slider extends ConstraintLayout {
             params.bottomMargin = mPointSize / 2;
         }
         mBgLine.setLayoutParams(params);
-        addView(mBgLine);
     }
 
     private void initPoints(Context context, AttributeSet attrs) {
@@ -124,65 +172,9 @@ public class Slider extends ConstraintLayout {
             SliderPoint point = new SliderPoint(context, attrs);
             point.setId(i);
             mPoints.put(i, point);
+            addView(point);
         }
-
-        float bias = 1.0f / (mPointsCount - 1);
-        float currentBias = 0;
-
-        if (mOrientation == HORIZONTAL) {
-            for (int i = START_INDEX; i < START_INDEX + mPointsCount; ++i) {
-                SliderPoint point = mPoints.get(i);
-
-                ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(mPointSize, mPointSize);
-                params.topToTop = PARENT_ID;
-                params.bottomToBottom = PARENT_ID;
-                params.startToStart = PARENT_ID;
-                params.endToEnd = PARENT_ID;
-                params.horizontalBias = currentBias;
-//                params.horizontalChainStyle = CHAIN_SPREAD_INSIDE;
-//                if (i == START_INDEX) {
-//                    params.startToStart = PARENT_ID;
-//                    params.endToStart = mPoints.get(i + 1).getId();
-//                } else if (i == START_INDEX + mPointsCount - 1) {
-//                    params.startToEnd = mPoints.get(i - 1).getId();
-//                    params.endToEnd = PARENT_ID;
-//                } else {
-//                    params.startToEnd = mPoints.get(i - 1).getId();
-//                    params.endToStart = mPoints.get(i + 1).getId();
-//                }
-
-                point.setLayoutParams(params);
-                addView(point);
-
-                currentBias += bias;
-            }
-        } else {
-            for (int i = START_INDEX; i < START_INDEX + mPointsCount; ++i) {
-                SliderPoint point = mPoints.get(i);
-
-                ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(mPointSize, mPointSize);
-                params.startToStart = PARENT_ID;
-                params.endToEnd = PARENT_ID;
-                params.startToStart = PARENT_ID;
-                params.endToEnd = PARENT_ID;
-                params.verticalBias = currentBias;
-//                params.verticalChainStyle = CHAIN_SPREAD_INSIDE;
-//                if (i == START_INDEX) {
-//                    params.topToTop = PARENT_ID;
-//                    params.bottomToTop = mPoints.get(i + 1).getId();
-//                } else if (i == START_INDEX + mPointsCount - 1) {
-//                    params.topToBottom = mPoints.get(i - 1).getId();
-//                    params.bottomToBottom = PARENT_ID;
-//                } else {
-//                    params.topToBottom = mPoints.get(i - 1).getId();
-//                    params.bottomToTop = mPoints.get(i + 1).getId();
-//                }
-
-                point.setLayoutParams(params);
-                addView(point);
-                currentBias += bias;
-            }
-        }
+        initPointsLayoutParams();
     }
 
     private void initClickListeners() {
@@ -326,5 +318,139 @@ public class Slider extends ConstraintLayout {
                     + "(View) in a parent or ancestor Context for onSubmit "
                     + "attribute defined on view " + mHostView.getClass() + idText);
         }
+    }
+
+    @Override
+    public Parcelable onSaveInstanceState() {
+        Parcelable superState = super.onSaveInstanceState();
+        SavedState ss = new SavedState(superState);
+        ss.setPosition(mCurrentPosition);
+        return ss;
+    }
+
+    @Override
+    public void onRestoreInstanceState(Parcelable state) {
+        SavedState ss = (SavedState) state;
+        setCurrentPosition(ss.getPosition());
+        super.onRestoreInstanceState(ss.getSuperState());
+    }
+
+    /**
+     * @param pointSize point width and height
+     */
+    public void setPointSize(int pointSize) {
+        mPointSize = pointSize;
+        initPointsLayoutParams();
+    }
+
+    /**
+     * @param lineStrokeWidth guide line stroke width
+     */
+    public void setLineStrokeWidth(int lineStrokeWidth) {
+        mLineStrokeWidth = lineStrokeWidth;
+        initLineLayoutParams();
+    }
+
+    /**
+     * @param orientation LinearLayout.HORIZONTAL or LinearLayout.VERTICAL
+     */
+    public void setOrientation(@IntRange(from = LinearLayout.HORIZONTAL, to = LinearLayout.VERTICAL) int orientation) {
+        mOrientation = orientation;
+        mBgLine.setOrientation(orientation);
+        initLineLayoutParams();
+        initPointsLayoutParams();
+    }
+
+    /**
+     * @param duration animation duration in ms
+     */
+    public void setDuration(long duration) {
+        mDuration = duration;
+        mBgLine.setDuration(duration);
+        for(SliderPoint point : mPoints.values()){
+            point.setDuration(duration);
+        }
+    }
+
+    /**
+     * @param outerLineColor color to be set
+     */
+    public void setOuterLineColor(@ColorInt int outerLineColor) {
+        mBgLine.setOuterLineColor(outerLineColor);
+    }
+
+    /**
+     * @param innerLineColor color to be set
+     */
+    public void setInnerLineColor(@ColorInt int innerLineColor) {
+        mBgLine.setInnerLineColor(innerLineColor);
+    }
+
+    /**
+     * @param pulseColor color to be set
+     */
+    public void setPointPulseColor(int pulseColor) {
+        for(SliderPoint point : mPoints.values()){
+            point.setPulseColor(pulseColor);
+        }
+    }
+
+    /**
+     * @param outerColor color to be set
+     */
+    public void setPointOuterColor(int outerColor) {
+        for(SliderPoint point : mPoints.values()){
+            point.setOuterColor(outerColor);
+        }
+    }
+
+    /**
+     * @param innerColor color to be set
+     */
+    public void setPointInnerColor(int innerColor) {
+        for(SliderPoint point : mPoints.values()){
+            point.setInnerColor(innerColor);
+        }
+    }
+
+    private static final class SavedState extends BaseSavedState {
+        private int mPosition;
+
+        SavedState(Parcelable superState) {
+            super(superState);
+        }
+
+        private SavedState(Parcel in) {
+            super(in);
+            mPosition = in.readInt();
+        }
+
+        @Override
+        public void writeToParcel(Parcel out, int flags) {
+            super.writeToParcel(out, flags);
+            out.writeInt(mPosition);
+        }
+
+        public static final Parcelable.Creator<SavedState> CREATOR
+                = new Parcelable.Creator<SavedState>() {
+            @Override
+            public SavedState createFromParcel(Parcel in) {
+                return new SavedState(in);
+            }
+
+            @Override
+            public SavedState[] newArray(int size) {
+                return new SavedState[size];
+            }
+        };
+
+        public int getPosition() {
+            return mPosition;
+        }
+
+        public void setPosition(int position) {
+            mPosition = position;
+        }
+
     }
 }
