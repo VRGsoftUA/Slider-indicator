@@ -1,7 +1,7 @@
 #### [HIRE US](http://vrgsoft.net/)
 
 # SliderIndicator
-Custom view for sms code input with customization</br></br>
+Custom view for view pager with customization</br></br>
 <img src="https://github.com/VRGsoftUA/Slider-indicator/blob/master/video.gif" width="270" height="480" />
 
 
